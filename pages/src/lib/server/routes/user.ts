@@ -90,6 +90,37 @@ userRoutes.post('/sign', async (c) => {
 
 // ---------- 资料修改 ----------
 
+/** 设置头像 (对照原版 UserController::setAvatar): POST /user/avatar {tid} */
+userRoutes.post('/avatar', async (c) => {
+  const trans = c.get('trans');
+  const body = await readBody(c);
+  const user = c.get('user')!;
+  const tid = Number(body.tid);
+
+  if (!Number.isInteger(tid) || tid < 0) {
+    return jsonValidationError({ tid: ['required|integer'] });
+  }
+
+  if (tid === 0) {
+    await c.env.DB.prepare('UPDATE users SET avatar = 0 WHERE uid = ?').bind(user.uid).run();
+    return json(await trans('user.profile.avatar.success'), 0);
+  }
+
+  const texture = await c.env.DB.prepare('SELECT * FROM textures WHERE tid = ?')
+    .bind(tid)
+    .first<{ tid: number; type: string; public: number; uploader: number }>();
+  if (!texture) return jsonError(await trans('skinlib.non-existent'), 1);
+  if (texture.type === 'cape') {
+    return jsonError(await trans('user.profile.avatar.wrong-type'), 1);
+  }
+  if (!texture.public && user.uid !== texture.uploader && user.permission < PERMISSION.ADMIN) {
+    return jsonError(await trans('skinlib.show.private'), 1);
+  }
+
+  await c.env.DB.prepare('UPDATE users SET avatar = ? WHERE uid = ?').bind(tid, user.uid).run();
+  return json(await trans('user.profile.avatar.success'), 0);
+});
+
 userRoutes.post('/profile', async (c) => {
   const trans = c.get('trans');
   const body = await readBody(c);

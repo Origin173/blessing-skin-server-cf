@@ -17,7 +17,7 @@ export default async function AdminI18nPage() {
   }
 
   const { results } = await env.DB.prepare(
-    'SELECT id, group_name AS "group", "key", text FROM language_lines ORDER BY group_name, "key" LIMIT 200',
+    'SELECT id, "group", "key", text FROM language_lines ORDER BY "group", "key" LIMIT 200',
   ).all<{ id: number; group: string; key: string; text: string }>();
 
   return (

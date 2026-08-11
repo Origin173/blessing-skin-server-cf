@@ -71,13 +71,13 @@ closetRoutes.post('', async (c) => {
 
   const result = await validate(
     body,
-    { tid: 'required|integer', name: 'required' },
+    { tid: 'required|integer' },
     { env: c.env, locale: c.get('locale') },
   );
   if (!result.ok) return jsonValidationError(result.errors);
 
   const tid = intValue(body.tid);
-  const name = String(body.name);
+  const name = String(body.name ?? '');
 
   const cost = Number(await option(c.env, 'score_per_closet_item'));
   if (user.score < cost) {

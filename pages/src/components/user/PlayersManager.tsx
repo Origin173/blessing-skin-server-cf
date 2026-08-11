@@ -60,7 +60,7 @@ export function PlayersManager({ initial, closetItems }: PlayersManagerProps) {
       setMessage('你还没有填写名称哦');
       return;
     }
-    const r = await api('/api/user/player', 'POST', { player_name: newName });
+    const r = await api('/api/user/player', 'POST', { name: newName });
     if (r.code === 0) {
       window.location.reload();
     } else {

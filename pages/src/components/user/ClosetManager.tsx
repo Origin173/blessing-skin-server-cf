@@ -50,7 +50,7 @@ export function ClosetManager({ initial, players }: ClosetManagerProps) {
   const handleRename = async (item: ClosetItemData) => {
     const name = window.prompt(I18N.newName, item.item_name ?? '');
     if (!name) return;
-    const r = await api(`/api/user/closet/${item.tid}`, 'PUT', { item_name: name });
+    const r = await api(`/api/user/closet/${item.tid}`, 'PUT', { name });
     if (r.code === 0) window.location.reload();
     else setMessage(r.message ?? '');
   };
