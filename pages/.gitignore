@@ -1,11 +1,11 @@
-# Pages 工作区忽略项
+# Next.js / OpenNext 工作区忽略项
 node_modules/
-dist/
+.next/
+.open-next/
 .wrangler/
+.wrangler*/
 .dev.vars
+*.sqlite
+*.tsbuildinfo
 *.log
 test-results/
-# 构建生成物 (由 npm run build:lang / build:lang-js 生成)
-functions/lib/lang/*.json
-web/public/lang/*.js
-.playwright-cli/

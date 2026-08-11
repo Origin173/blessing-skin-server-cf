@@ -1,20 +1,11 @@
-# 复制为 .dev.vars 并填入本地开发值;生产环境用 `wrangler secret put` 设置同名密钥
-
-# 密码哈希算法 (与原站 .env PWD_METHOD 一致):
-# BCRYPT / ARGON2I / PHP_PASSWORD_HASH / MD5 / SALTED2MD5 / SHA256 / SALTED2SHA256 / SHA512 / SALTED2SHA512
-PWD_METHOD=BCRYPT
-
-# 加盐哈希变体所需的盐 (原站 .env 的 SALT;无则留空)
+# 复制为 .dev.vars 用于本地 wrangler dev（生产环境在 Pages 项目 Secrets 中配置）
+# 必填
+APP_KEY=change-me-random-64-hex-chars
+# 可选（PWD_METHOD=BCRYPT 时 SALT 不需要；邮箱验证/通知需要 RESEND）
 SALT=
-
-# 签名 URL 密钥 (密码重置/邮箱验证)。须与原站 .env APP_KEY 完全一致,否则旧邮件链接失效
-APP_KEY=base64:REPLACE_WITH_OLD_APP_KEY
-
-# OAuth2 JWT 密钥 (原站 storage/oauth-private.key / oauth-public.key 的内容)
-PASSPORT_PRIVATE_KEY=-----BEGIN RSA PRIVATE KEY-----
-PASSPORT_PUBLIC_KEY=-----BEGIN PUBLIC KEY-----
-
-# 邮件 (Resend)
 RESEND_API_KEY=
-MAIL_FROM_ADDRESS=noreply@example.com
-MAIL_FROM_NAME=Blessing Skin
+MAIL_FROM_ADDRESS=
+MAIL_FROM_NAME=
+# OAuth2（当前 token 表实现暂未使用，预留）
+PASSPORT_PRIVATE_KEY=
+PASSPORT_PUBLIC_KEY=

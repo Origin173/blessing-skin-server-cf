@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../..', import.meta.url)); // 仓库根
 const langSrcDir = join(root, 'resources', 'lang');
-const langOutDir = join(root, 'pages', 'next', 'src', 'lib', 'server', 'lang');
+const langOutDir = join(root, 'pages', 'src', 'lib', 'server', 'lang');
 
 /** 单个 yml 文件路径 (Symfony 风格) */
 function collectYmlFiles(dir) {
