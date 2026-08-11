@@ -6,6 +6,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { t } from '@/lib/client-i18n';
 
 interface SetupStatus {
   available: boolean;
@@ -19,7 +20,11 @@ interface SetupData extends SetupStatus {
   token: string;
 }
 
-const STEPS = ['欢迎', '环境检查', '管理员信息'] as const;
+const STEPS = () => [
+  t('setup.wizard.welcome.title'),
+  t('setup.wizard.database.title'),
+  t('setup.wizard.info.title'),
+] as const;
 
 export default function SetupPage() {
   const [data, setData] = useState<SetupData | null>(null);
@@ -85,9 +90,9 @@ export default function SetupPage() {
       <div className="hero d-flex" style={{ minHeight: '100vh' }}>
         <div className="hero-body text-center">
           <h1>Blessing Skin Server</h1>
-          <p>站点已安装完成。</p>
+          <p>{t('setup.wizard.finish.text')}</p>
           <a href="/" className="btn btn-primary">
-            返回首页
+            {t('setup.locked.button')}
           </a>
         </div>
       </div>
@@ -106,19 +111,17 @@ export default function SetupPage() {
             </a>
           </h1>
           <div className="divider" />
-          <h3>{STEPS[step]}</h3>
+          <h3>{STEPS()[step]}</h3>
           <div className="divider" />
 
           {message && <div className="toast toast-error">{message}</div>}
 
           {step === 0 && (
             <>
-              <p>
-                欢迎使用 Blessing Skin Server 6.0.2 (Cloudflare Pages)。请按照向导完成站点初始化。
-              </p>
+              <p>{t('setup.wizard.welcome.text', { version: '6.0.2' })}</p>
               <p className="step">
                 <button className="btn btn-primary" onClick={() => setStep(1)}>
-                  开始安装
+                  {t('setup.wizard.welcome.button')}
                 </button>
               </p>
             </>
@@ -126,7 +129,7 @@ export default function SetupPage() {
 
           {step === 1 && (
             <>
-              <p>请确认以下 Cloudflare 资源已配置：</p>
+              <p>{t('setup.wizard.database.text')}</p>
               <table className="table">
                 <tbody>
                   <tr>
@@ -145,7 +148,7 @@ export default function SetupPage() {
               </table>
               <p className="step">
                 <button className="btn btn-primary" onClick={() => setStep(2)}>
-                  下一步
+                  {t('setup.wizard.welcome.button')}
                 </button>
               </p>
             </>
@@ -153,9 +156,9 @@ export default function SetupPage() {
 
           {step === 2 && (
             <>
-              <p>请设置管理员账号与站点信息：</p>
+              <p>{t('setup.wizard.info.text')}</p>
               <div className="form-group">
-                <label className="form-label">站点名称</label>
+                <label className="form-label">{t('setup.wizard.info.site-name')}</label>
                 <input
                   className="form-input"
                   value={siteName}
@@ -164,7 +167,7 @@ export default function SetupPage() {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">管理员邮箱</label>
+                <label className="form-label">{t('setup.wizard.info.admin-email')}</label>
                 <input
                   type="email"
                   className="form-input"
@@ -173,11 +176,11 @@ export default function SetupPage() {
                 />
               </div>
               <div className="form-group">
-                <label className="form-label">管理员昵称</label>
+                <label className="form-label">{t('setup.wizard.info.nickname')}</label>
                 <input className="form-input" value={nickname} onChange={(e) => setNickname(e.target.value)} />
               </div>
               <div className="form-group">
-                <label className="form-label">管理员密码</label>
+                <label className="form-label">{t('setup.wizard.info.password')}</label>
                 <input
                   type="password"
                   className="form-input"
@@ -187,7 +190,7 @@ export default function SetupPage() {
               </div>
               <p className="step">
                 <button className="btn btn-primary" disabled={busy} onClick={handleFinish}>
-                  {busy ? '安装中...' : '完成安装'}
+                  {busy ? '安装中...' : t('setup.wizard.info.button')}
                 </button>
               </p>
             </>

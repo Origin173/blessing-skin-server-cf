@@ -36,6 +36,8 @@ export function LayoutClient({
         try {
           const $ = (await import('jquery')).default;
           (window as any).$ = (window as any).jQuery = $;
+          // bootstrap bundle (内联 popper) 提供 $.fn.tooltip 等 jQuery 插件 (admin-lte 依赖)
+          await import('bootstrap/dist/js/bootstrap.bundle');
           await import('admin-lte');
           ($ as any)('[data-toggle="tooltip"]').tooltip();
         } catch (error) {

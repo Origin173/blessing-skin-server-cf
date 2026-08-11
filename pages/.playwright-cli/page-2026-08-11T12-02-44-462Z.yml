@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - list [ref=e4]:
+        - listitem [ref=e5]:
+          - link "皮肤库" [ref=e6] [cursor=pointer]:
+            - /url: /skinlib
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link [ref=e9] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e10]: 
+        - listitem [ref=e11]:
+          - link "" [ref=e12] [cursor=pointer]:
+            - /url: /auth/login
+    - generic [ref=e19]:
+      - generic [ref=e21]:
+        - heading "皮肤库" [level=1] [ref=e22]
+        - generic [ref=e23]:
+          - generic [ref=e24]: 
+          - text: 所有用户
+      - generic [ref=e26]:
+        - generic [ref=e27]:
+          - generic [ref=e29]:
+            - button "皮肤" [ref=e32] [cursor=pointer]
+            - searchbox "搜索" [ref=e33]
+            - button "" [ref=e35] [cursor=pointer]
+          - generic [ref=e37]:
+            - link "最多收藏" [ref=e38] [cursor=pointer]:
+              - /url: /skinlib?filter=skin&sort=likes
+            - link "最新上传" [ref=e39] [cursor=pointer]:
+              - /url: /skinlib?filter=skin&sort=upload_at
+            - link "清除筛选" [ref=e40] [cursor=pointer]:
+              - /url: /skinlib
+        - paragraph [ref=e42]: 无结果
+    - contentinfo [ref=e43]:
+      - generic [ref=e45]:
+        - generic [ref=e46]:
+          - text: Copyright © 2026
+          - link "Blessing Skin" [ref=e47] [cursor=pointer]:
+            - /url: ""
+          - text: .
+        - text: All rights reserved.
+  - alert [ref=e48]

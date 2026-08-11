@@ -32,12 +32,6 @@ interface TextureRow {
 
 const PER_PAGE = 20;
 
-function humanizeType(type: string): string {
-  if (type === 'alex') return 'Alex';
-  if (type === 'cape') return '披风';
-  return 'Steve';
-}
-
 function buildQuery(params: Record<string, string | undefined>): string {
   const sp = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) {
@@ -106,16 +100,39 @@ export default async function SkinLibraryPage({
     .all<TextureRow>();
   const items = results as TextureRow[];
 
-  // 预计算翻译
-  const [labelPrivate, labelUploader, labelUploadedBy, labelAllUsers, labelNewest, labelMostLiked] =
-    await Promise.all([
-      t('skinlib.private', {}, { locale }),
-      t('skinlib.show.uploader', {}, { locale }),
-      t('skinlib.filter.uploader', { uid: uploader ?? 0 }, { locale }),
-      t('skinlib.filter.allUsers', {}, { locale }),
-      t('skinlib.sort.time', {}, { locale }),
-      t('skinlib.sort.likes', {}, { locale }),
-    ]);
+  // 预计算翻译 (服务端 RSC, 对照原版前端 t() 的 key)
+  const [
+    labelSkinlib,
+    labelPrivate,
+    labelUploadedBy,
+    labelUploaderFilter,
+    labelAllUsers,
+    labelNewest,
+    labelMostLiked,
+    labelSeeMyUpload,
+    labelReset,
+    labelSearch,
+    labelNoResult,
+    labelSkin,
+    labelCape,
+  ] = await Promise.all([
+    t('general.skinlib', {}, { locale }),
+    t('skinlib.private', {}, { locale }),
+    t('skinlib.show.uploader', {}, { locale }),
+    t('skinlib.filter.uploader', { uid: uploader ?? 0 }, { locale }),
+    t('skinlib.filter.allUsers', {}, { locale }),
+    t('skinlib.sort.time', {}, { locale }),
+    t('skinlib.sort.likes', {}, { locale }),
+    t('skinlib.seeMyUpload', {}, { locale }),
+    t('skinlib.reset', {}, { locale }),
+    t('vendor.datatable.search', {}, { locale }),
+    t('general.noResult', {}, { locale }),
+    t('general.skin', {}, { locale }),
+    t('general.cape', {}, { locale }),
+  ]);
+
+  // 原版 humanizeType: steve/alex 直显, 其余查 general.*
+  const humanizedFilter = type === 'steve' ? 'Steve' : type === 'alex' ? 'Alex' : type === 'cape' ? labelCape : labelSkin;
 
   const linkParams = { filter: type, keyword: keyword || undefined, uploader: uploader ? String(uploader) : undefined, sort };
 
@@ -124,77 +141,126 @@ export default async function SkinLibraryPage({
       <div className="content-wrapper">
         <section className="content">
           <div className="container">
-            {/* 筛选栏 */}
-            <div className="d-flex flex-wrap align-items-center py-3">
-              <div className="btn-group mr-3" role="group">
-                {[
-                  { key: 'skin', label: '（任意模型）' },
-                  { key: 'steve', label: '（Steve）' },
-                  { key: 'alex', label: '（Alex）' },
-                  { key: 'cape', label: '（披风）' },
-                ].map((f) => (
-                  <Link
-                    key={f.key}
-                    href={`/skinlib${buildQuery({ ...linkParams, filter: f.key })}`}
-                    className={`btn btn-sm ${type === f.key ? 'btn-primary' : 'btn-outline-primary'}`}
-                  >
-                    {f.label}
-                  </Link>
-                ))}
-              </div>
-
-              <div className="btn-group mr-3" role="group">
-                <Link
-                  href={`/skinlib${buildQuery({ ...linkParams, sort: 'upload_at' })}`}
-                  className={`btn btn-sm ${sort === 'upload_at' ? 'btn-primary' : 'btn-outline-primary'}`}
-                >
-                  {labelNewest}
-                </Link>
-                <Link
-                  href={`/skinlib${buildQuery({ ...linkParams, sort: 'likes' })}`}
-                  className={`btn btn-sm ${sort === 'likes' ? 'btn-primary' : 'btn-outline-primary'}`}
-                >
-                  {labelMostLiked}
-                </Link>
-              </div>
-
-              <div className="btn-group" role="group">
-                <Link
-                  href={`/skinlib${buildQuery({ ...linkParams, uploader: undefined })}`}
-                  className={`btn btn-sm ${!uploader ? 'btn-primary' : 'btn-outline-primary'}`}
-                >
-                  {labelAllUsers}
-                </Link>
-                {user && (
-                  <Link
-                    href={`/skinlib${buildQuery({ ...linkParams, uploader: String(user.uid) })}`}
-                    className={`btn btn-sm ${uploader === user.uid ? 'btn-primary' : 'btn-outline-primary'}`}
-                  >
-                    我上传的
-                  </Link>
-                )}
-              </div>
-
-              {keyword && (
-                <span className="ml-3 text-muted">
-                  关键词：{keyword}
-                  <Link href={`/skinlib${buildQuery({ ...linkParams, keyword: undefined })}`} className="ml-2">
-                    清除筛选
-                  </Link>
+            {/* 内容头 (原版: 标题 + 上传者标识) */}
+            <div className="content-header px-0">
+              <div className="d-flex justify-content-between">
+                <h1>{labelSkinlib}</h1>
+                <span className="align-self-center">
+                  {uploader ? (
+                    <>
+                      <i className="fas fa-user mr-1" />
+                      {labelUploaderFilter}
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-user-friends mr-1" />
+                      {labelAllUsers}
+                    </>
+                  )}
                 </span>
-              )}
+              </div>
             </div>
 
-            {/* 网格 */}
-            <div className="d-flex flex-wrap mb-3">
-              {items.length === 0 && <div className="text-center w-100 py-5">无结果</div>}
-              {items.map((item) => (
-                <a
-                  key={item.tid}
-                  href={`/skinlib/show/${item.tid}`}
-                  target="_blank"
-                  className="ml-3 mr-2 mb-2 d-block"
-                >
+            <div className="card">
+              <div className="card-body">
+                {/* 筛选行 (原版: 模型下拉 + 搜索 + 排序按钮组) */}
+                <div className="form-group pt-0 mb-3 d-flex justify-content-between flex-wrap">
+                  <form action="/skinlib" method="get" className="mb-2 mb-sm-0">
+                    <div className="input-group">
+                      <input type="hidden" name="filter" value={type} />
+                      <input type="hidden" name="sort" value={sort} />
+                      {uploader ? <input type="hidden" name="uploader" value={uploader} /> : null}
+                      <div className="input-group-prepend">
+                        <div className="dropdown">
+                          <button
+                            type="button"
+                            className="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                          >
+                            {humanizedFilter}
+                          </button>
+                          <div className="dropdown-menu">
+                            <Link
+                              className={`dropdown-item ${type === 'skin' ? 'active' : ''}`}
+                              href={`/skinlib${buildQuery({ ...linkParams, filter: 'skin' })}`}
+                            >
+                              {labelSkin}
+                            </Link>
+                            <Link
+                              className={`dropdown-item ${type === 'steve' ? 'active' : ''}`}
+                              href={`/skinlib${buildQuery({ ...linkParams, filter: 'steve' })}`}
+                            >
+                              Steve
+                            </Link>
+                            <Link
+                              className={`dropdown-item ${type === 'alex' ? 'active' : ''}`}
+                              href={`/skinlib${buildQuery({ ...linkParams, filter: 'alex' })}`}
+                            >
+                              Alex
+                            </Link>
+                            <Link
+                              className={`dropdown-item ${type === 'cape' ? 'active' : ''}`}
+                              href={`/skinlib${buildQuery({ ...linkParams, filter: 'cape' })}`}
+                            >
+                              {labelCape}
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        type="search"
+                        name="keyword"
+                        defaultValue={keyword}
+                        className="form-control"
+                        placeholder={labelSearch}
+                      />
+                      <div className="input-group-append">
+                        <button className="btn btn-primary px-3" type="submit" title={labelSearch}>
+                          <i className="fas fa-search" />
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+
+                  <div className="btn-group">
+                    <Link
+                      href={`/skinlib${buildQuery({ ...linkParams, sort: 'likes' })}`}
+                      className={`btn bg-olive ${sort === 'likes' ? 'active' : ''}`}
+                    >
+                      {labelMostLiked}
+                    </Link>
+                    <Link
+                      href={`/skinlib${buildQuery({ ...linkParams, sort: 'upload_at' })}`}
+                      className={`btn bg-olive ${sort === 'upload_at' ? 'active' : ''}`}
+                    >
+                      {labelNewest}
+                    </Link>
+                    {user && (
+                      <Link
+                        href={`/skinlib${buildQuery({ ...linkParams, uploader: String(user.uid) })}`}
+                        className={`btn bg-olive ${uploader === user.uid ? 'active' : ''}`}
+                      >
+                        {labelSeeMyUpload}
+                      </Link>
+                    )}
+                    <Link href="/skinlib" className="btn bg-olive">
+                      {labelReset}
+                    </Link>
+                  </div>
+                </div>
+
+                {/* 网格 */}
+                <div className="d-flex flex-wrap">
+                  {items.length === 0 && <p className="text-center m-5 w-100">{labelNoResult}</p>}
+                  {items.map((item) => (
+                    <a
+                      key={item.tid}
+                      href={`/skinlib/show/${item.tid}`}
+                      target="_blank"
+                      className="ml-3 mr-2 mb-2 d-block"
+                    >
                   <div className="card" style={{ width: 245 }}>
                     <div className="card-body" style={{ backgroundColor: '#eff1f0' }}>
                       <img
@@ -215,10 +281,12 @@ export default async function SkinLibraryPage({
                       </div>
                       <div className="d-flex justify-content-between">
                         <div className="d-flex">
-                          <span className="badge bg-teal mr-1">{humanizeType(item.type)}</span>
+                          <span className="badge bg-teal mr-1">
+                            {item.type === 'cape' ? labelCape : item.type === 'alex' ? 'Alex' : 'Steve'}
+                          </span>
                           <span
                             className="badge bg-indigo text-truncate"
-                            title={labelUploader}
+                            title={labelUploadedBy}
                             style={{ maxWidth: 100, cursor: 'pointer' }}
                           >
                             {item.nickname}
@@ -235,23 +303,27 @@ export default async function SkinLibraryPage({
               ))}
             </div>
 
-            {/* 分页 */}
+            {/* 分页 (原版 card-footer) */}
             {lastPage > 1 && (
-              <nav aria-label="Page navigation">
-                <ul className="pagination justify-content-center">
-                  {Array.from({ length: lastPage }, (_, i) => i + 1).map((p) => (
-                    <li key={p} className={`page-item ${p === currentPage ? 'active' : ''}`}>
-                      <Link
-                        href={`/skinlib${buildQuery({ ...linkParams, page: String(p) })}`}
-                        className="page-link"
-                      >
-                        {p}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
+              <div className="card-footer">
+                <nav aria-label="Page navigation">
+                  <ul className="pagination justify-content-center mb-0">
+                    {Array.from({ length: lastPage }, (_, i) => i + 1).map((p) => (
+                      <li key={p} className={`page-item ${p === currentPage ? 'active' : ''}`}>
+                        <Link
+                          href={`/skinlib${buildQuery({ ...linkParams, page: String(p) })}`}
+                          className="page-link"
+                        >
+                          {p}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </div>
             )}
+              </div>
+            </div>
           </div>
         </section>
       </div>

@@ -1,0 +1,27 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "Blessing Skin" [ref=e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e6]:
+      - paragraph [ref=e7]: 欢迎使用 Blessing Skin！
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - textbox "电子邮箱" [active] [ref=e10]
+          - generic [ref=e11]: 
+        - generic [ref=e14]:
+          - textbox "密码" [ref=e15]
+          - generic [ref=e16]: 
+        - generic [ref=e19]:
+          - textbox "重复密码" [ref=e20]
+          - generic [ref=e21]: 
+        - generic "游戏内的角色名，注册后可修改" [ref=e24]:
+          - textbox "游戏内角色名" [ref=e25]
+          - generic [ref=e26]: 
+        - generic [ref=e29]:
+          - img "captcha" [ref=e30] [cursor=pointer]
+          - textbox "请输入验证码" [ref=e31]
+        - generic [ref=e32]:
+          - link "已经有账号了？登录" [ref=e33] [cursor=pointer]:
+            - /url: /auth/login
+          - button "注册" [ref=e34] [cursor=pointer]
+  - alert [ref=e35]

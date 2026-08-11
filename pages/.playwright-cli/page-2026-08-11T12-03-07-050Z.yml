@@ -1,0 +1,23 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - link "Blessing Skin" [ref=e4] [cursor=pointer]:
+      - /url: /
+    - generic [ref=e6]:
+      - paragraph [ref=e7]: 登录以管理您的角色与皮肤
+      - generic [ref=e8]:
+        - generic [ref=e9]:
+          - textbox "Email 或角色名" [active] [ref=e10]
+          - generic [ref=e11]: 
+        - generic [ref=e14]:
+          - textbox "密码" [ref=e15]
+          - generic [ref=e16]: 
+        - generic [ref=e19]:
+          - generic [ref=e20]:
+            - checkbox "记住我" [ref=e21]
+            - text: 记住我
+          - link "忘记密码？" [ref=e22] [cursor=pointer]:
+            - /url: /auth/forgot
+        - button "登录" [ref=e23] [cursor=pointer]
+      - link "注册新账号" [ref=e25] [cursor=pointer]:
+        - /url: /auth/register
+  - alert [ref=e26]

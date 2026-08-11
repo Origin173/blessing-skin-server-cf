@@ -7,7 +7,7 @@
  *   - home: 首页自带完整结构 (对照 home.twig)
  */
 import React from 'react';
-import { t } from '@/lib/server/i18n';
+import { t, loadBundle } from '@/lib/server/i18n';
 import type { AppContext } from '@/lib/server/context';
 import type { SiteData } from '@/lib/server/site';
 import { MENU } from '@/lib/server/menu';
@@ -52,6 +52,10 @@ async function HeadInject({ ctx, site, path, darkMode }: HeadInjectProps) {
   const { extraHead, links, scripts, inlineCss, inlineJs } = await collectHead(path);
   const { extraFoot } = await collectFoot();
 
+  // 前端 i18n (对齐原版 blessing.i18n = trans('front-end')):
+  // 注入完整 flat 语言包, client 组件用 src/lib/client-i18n.ts 的 t() 读取
+  const i18nBundle = await loadBundle(ctx.locale);
+
   const blessing: Record<string, unknown> = {
     version: APP_VERSION,
     locale: ctx.locale,
@@ -87,6 +91,9 @@ async function HeadInject({ ctx, site, path, darkMode }: HeadInjectProps) {
       ))}
       <script
         dangerouslySetInnerHTML={{ __html: `window.blessing = ${JSON.stringify(blessing)};` }}
+      />
+      <script
+        dangerouslySetInnerHTML={{ __html: `window.__I18N = ${JSON.stringify(i18nBundle)};` }}
       />
       {scripts.map((script, i) => (
         <script key={`script-${i}`} {...script} />

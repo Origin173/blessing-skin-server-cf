@@ -39,7 +39,7 @@ type LangBundle = Record<string, string>;
 
 const bundleCache = new Map<string, Promise<LangBundle>>();
 
-async function loadBundle(locale: string): Promise<LangBundle> {
+export async function loadBundle(locale: string): Promise<LangBundle> {
   if (!bundleCache.has(locale)) {
     bundleCache.set(
       locale,

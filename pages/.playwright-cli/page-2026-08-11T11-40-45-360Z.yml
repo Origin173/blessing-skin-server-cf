@@ -1,0 +1,44 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - list [ref=e4]:
+        - listitem [ref=e5]:
+          - link "皮肤库" [ref=e6] [cursor=pointer]:
+            - /url: /skinlib
+      - list [ref=e7]:
+        - listitem [ref=e8]:
+          - link [ref=e9] [cursor=pointer]:
+            - /url: "#"
+            - generic [ref=e10]: 
+        - listitem [ref=e11]:
+          - link "" [ref=e12] [cursor=pointer]:
+            - /url: /auth/login
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - group [ref=e21]:
+          - link "（任意模型）" [ref=e22] [cursor=pointer]:
+            - /url: /skinlib?filter=skin&sort=upload_at
+          - link "（Steve）" [ref=e23] [cursor=pointer]:
+            - /url: /skinlib?filter=steve&sort=upload_at
+          - link "（Alex）" [ref=e24] [cursor=pointer]:
+            - /url: /skinlib?filter=alex&sort=upload_at
+          - link "（披风）" [ref=e25] [cursor=pointer]:
+            - /url: /skinlib?filter=cape&sort=upload_at
+        - group [ref=e26]:
+          - link "skinlib.sort.time" [ref=e27] [cursor=pointer]:
+            - /url: /skinlib?filter=skin&sort=upload_at
+          - link "skinlib.sort.likes" [ref=e28] [cursor=pointer]:
+            - /url: /skinlib?filter=skin&sort=likes
+        - group [ref=e29]:
+          - link "skinlib.filter.allUsers" [ref=e30] [cursor=pointer]:
+            - /url: /skinlib?filter=skin&sort=upload_at
+      - generic [ref=e31]: 无结果
+    - contentinfo [ref=e33]:
+      - generic [ref=e35]:
+        - generic [ref=e36]:
+          - text: Copyright © 2026
+          - link "Blessing Skin" [ref=e37] [cursor=pointer]:
+            - /url: ""
+          - text: .
+        - text: All rights reserved.
+  - alert [ref=e38]
