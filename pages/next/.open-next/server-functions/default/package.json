@@ -1,0 +1,41 @@
+{
+  "name": "blessing-skin-next",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Blessing Skin Server — Next.js (OpenNext on Cloudflare Pages) 重构",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "deploy:pages": "opennextjs-cloudflare build && wrangler pages deploy .open-next --project-name=blessing-skin-next",
+    "typecheck": "tsc --noEmit",
+    "db:migrate:local": "wrangler d1 migrations apply blessingskin --local",
+    "db:migrate:remote": "wrangler d1 migrations apply blessingskin --remote"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^6.3.0",
+    "admin-lte": "^3.2.0",
+    "bcryptjs": "^3.0.3",
+    "bootstrap": "^4.6.1",
+    "fast-png": "^8.0.0",
+    "jquery": "^3.6.0",
+    "next": "^15.5.23",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "skinview3d": "^3.4.2",
+    "spectre.css": "^0.5.8"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260810.1",
+    "@opennextjs/cloudflare": "^1.20.2",
+    "@types/jquery": "^3.5.13",
+    "@types/node": "^22.10.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "typescript": "^5.7.0",
+    "wrangler": "^4.118.0"
+  }
+}

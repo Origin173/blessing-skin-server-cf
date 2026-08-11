@@ -1,0 +1,27 @@
+{
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 5139,
+    "files": [
+      "static/chunks/5139.2f1dc151eb94c495.js"
+    ]
+  },
+  "..\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 1646,
+    "files": [
+      "static/chunks/1646.9123ee47220ed70b.js"
+    ]
+  },
+  "components\\layout\\LayoutClient.tsx -> admin-lte": {
+    "id": 9529,
+    "files": [
+      "static/chunks/7ce798d6.21af20ec7a785384.js",
+      "static/chunks/9529.084437eccc4fbd2d.js"
+    ]
+  },
+  "components\\layout\\LayoutClient.tsx -> jquery": {
+    "id": 214,
+    "files": [
+      "static/chunks/7ce798d6.21af20ec7a785384.js"
+    ]
+  }
+}

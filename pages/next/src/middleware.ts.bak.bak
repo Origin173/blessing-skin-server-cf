@@ -1,0 +1,45 @@
+/**
+ * 中间件: 非 GET 业务请求重写到统一 compat 分发入口。
+ * 原因: Next.js 的 page.tsx 会拦截该路径的所有 HTTP 方法 (POST 也被渲染为页面),
+ *       而 catch-all route.ts 在静态页面存在时不会被调用。
+ * 方案: POST/PUT/DELETE/PATCH 请求重写到 /api/__compat{pathname},由
+ *       app/api/__compat/[[...path]]/route.ts 按原路径分发给 CompatRouter。
+ *       (rewrite 不改变浏览器地址栏与请求体,语义与原版 URL 完全一致)
+ */
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+const COMPAT_METHODS = ['POST', 'PUT', 'DELETE', 'PATCH'];
+
+// 业务前缀 (与 catch-all route.ts 的挂载对应;静态接口 GET 无需处理)
+const COMPAT_PREFIXES = [
+  '/auth',
+  '/user',
+  '/skinlib',
+  '/texture',
+  '/admin',
+  '/setup',
+  '/oauth',
+];
+
+export function middleware(request: NextRequest) {
+  const { pathname, search } = new URL(request.url);
+
+  if (COMPAT_METHODS.includes(request.method)) {
+    const matched = COMPAT_PREFIXES.some(
+      (p) => pathname === p || pathname.startsWith(p + '/'),
+    );
+    if (matched) {
+      return NextResponse.rewrite(new URL(`/api/__compat${pathname}${search}`, request.url));
+    }
+  }
+
+  return NextResponse.next();
+}
+
+export const config = {
+  matcher: [
+    // 排除静态资源与 Next 内部路径
+    '/((?!_next/static|_next/image|_next/data|favicon.ico|lang/|app/|assets/|plugins/|textures/|raw/|avatar/|preview/|csl/|api/|oauth/authorize).*)',
+  ],
+};

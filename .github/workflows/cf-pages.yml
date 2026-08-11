@@ -1,0 +1,74 @@
+name: CF Pages CI
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'pages/next/**'
+      - 'pages/migrations/**'
+      - '.github/workflows/cf-pages.yml'
+  pull_request:
+    paths:
+      - 'pages/next/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pages/next
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: pages/next/package-lock.json
+      - run: npm ci
+      - name: Generate language bundles
+        run: node ../scripts/build-lang.mjs
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Build OpenNext worker
+        run: npx opennextjs-cloudflare build
+      - name: Apply D1 migrations (local)
+        run: |
+          npx wrangler d1 migrations apply blessingskin --local --persist-to .wrangler-test
+          npx wrangler d1 execute blessingskin --local --persist-to .wrangler-test --command "INSERT OR IGNORE INTO plugin_manifests (name, manifest_json, readme, enabled, source, installed_at, updated_at) VALUES ('smoke-plugin', '{\"name\":\"smoke-plugin\",\"version\":\"1.0.0\"}', NULL, 1, 'upload', datetime('now'), datetime('now'))"
+      - name: Smoke test
+        run: |
+          npx wrangler dev .open-next/worker.js --port 8798 --local --persist-to .wrangler-test > /tmp/wrangler-dev.log 2>&1 &
+          for i in $(seq 1 30); do
+            code=$(curl -s -m 4 -o /dev/null -w '%{http_code}' http://127.0.0.1:8798/ 2>/dev/null)
+            [ "$code" = "200" ] && break
+            sleep 4
+          done
+          SMOKE_BASE=http://127.0.0.1:8798 node scripts/smoke-e2e.mjs
+          kill %1 || true
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pages/next
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: pages/next/package-lock.json
+      - run: npm ci
+      - run: node ../scripts/build-lang.mjs && npx opennextjs-cloudflare build
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy .open-next --project-name=blessing-skin-next --branch=main
+          workingDirectory: pages/next

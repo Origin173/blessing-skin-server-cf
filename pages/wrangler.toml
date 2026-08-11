@@ -1,0 +1,44 @@
+# Cloudflare Pages 项目配置 — Blessing Skin Server 移植
+# 文档: https://developers.cloudflare.com/pages/functions/wrangler-configuration/
+
+name = "blessing-skin"
+compatibility_date = "2025-05-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Pages 静态产物目录 (React SPA,由 pages/web 构建)
+pages_build_output_dir = "./web/dist"
+
+# ---------- 绑定 ----------
+
+# D1 数据库 (业务表 + Passport 表)
+[[d1_databases]]
+binding = "DB"
+database_name = "blessingskin"
+database_id = "58da267c-6d4c-4cb7-9225-c724de5e81ef"
+
+# R2 纹理存储 (对象 key = 纹理 sha256 hex,扁平命名空间)
+[[r2_buckets]]
+binding = "TEXTURES"
+bucket_name = "blessingskin-textures"
+
+# KV (会话 / captcha / 限流计数 / options 缓存)
+[[kv_namespaces]]
+binding = "KV_SKIN"
+id = "ef4940bd1141494fb86c76a362d6f0d1"
+
+# ---------- 非机密配置 ----------
+
+[vars]
+# 与原站 config/secure.php 对应:密码哈希算法(BCRYPT/ARGON2I/PHP_PASSWORD_HASH/
+# MD5/SALTED2MD5/SHA256/SALTED2SHA256/SHA512/SALTED2SHA512)
+PWD_METHOD = "BCRYPT"
+# 默认积分等站点选项在 options 表中,无需在此配置
+
+# ---------- 机密配置 (通过 `wrangler secret put` 或 .dev.vars 提供) ----------
+# SALT                        — 加盐哈希变体所需的盐 (与旧站 .env 一致)
+# APP_KEY                     — 签名 URL (密码重置/邮箱验证) HMAC 密钥,须与旧站一致
+# PASSPORT_PRIVATE_KEY        — OAuth2 JWT 私钥 (迁移旧站 storage/oauth-private.key)
+# PASSPORT_PUBLIC_KEY         — OAuth2 JWT 公钥 (迁移旧站 storage/oauth-public.key)
+# RESEND_API_KEY              — 邮件发送 (Resend)
+# MAIL_FROM_ADDRESS           — 发件人邮箱
+# MAIL_FROM_NAME              — 发件人名称

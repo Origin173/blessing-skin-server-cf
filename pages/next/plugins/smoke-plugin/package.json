@@ -1,0 +1,9 @@
+{
+  "name": "smoke-plugin",
+  "version": "1.0.0",
+  "author": "Blessing Skin Team",
+  "description": "SDK 冒烟测试插件: header 注入 / 样式注入 / 路由注册",
+  "require": {
+    "blessing-skin-server": "^6.0.0"
+  }
+}
