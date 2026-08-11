@@ -4,6 +4,12 @@ name = "blessing-skin-next"
 compatibility_date = "2025-05-01"
 compatibility_flags = ["nodejs_compat"]
 
+# ---------- 静态资源 (OpenNext 构建产物, 由 ASSETS 绑定服务) ----------
+
+[assets]
+directory = "./.open-next/assets"
+binding = "ASSETS"
+
 # ---------- 绑定 (与原 pages/ 同名,代码复用零改动) ----------
 
 [[d1_databases]]
