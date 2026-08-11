@@ -20,4 +20,4 @@
 
 - `next/` 内容已提升为 `pages/` 根目录 (本目录即 Next.js 项目), 旧版 Hono/SPA 残留全部移除
 - 构建产物已从 git 移除跟踪 (见 `.gitignore`); D1 migrations 保持在 `migrations/` 供远程执行
-- CI: `.github/workflows/cf-pages.yml` 工作目录改为 `pages`, push `main` 自动部署 `blessing-skin-next`
+- CI: `.github/workflows/cf-pages.yml` 工作目录为 `pages`, push `main` 自动 `wrangler deploy` 到 Workers (`blessing-skin-next`)

@@ -69,10 +69,10 @@ jobs:
           cache-dependency-path: pages/package-lock.json
       - run: npm ci
       - run: node scripts/build-lang.mjs && npx opennextjs-cloudflare build
-      - name: Deploy to Cloudflare Pages
+      - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy .open-next --project-name=blessing-skin-next --branch=main
+          command: deploy .open-next/worker.js
           workingDirectory: pages

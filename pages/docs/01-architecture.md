@@ -1,7 +1,7 @@
 # Blessing Skin → Next.js 架构设计
 
 > 对照原版 [Blessing Skin Server v6.0.2](https://github.com/bs-community/blessing-skin-server)（PHP 8.1 + Laravel 10）
-> 的逐层映射设计。部署目标：**Cloudflare Pages（Workers）**，适配器：**OpenNext**。
+> 的逐层映射设计。部署目标：**Cloudflare Workers**，适配器：**OpenNext**。
 > 本文档是 `pages/` 新项目（原 `pages/next/`，已提升为根目录）的实现依据；原 Hono 版
 > （`pages/functions/`）+ Vite SPA（`pages/web/`）已按路线图 P5 删除，文中相关路径指
 > 迁移源实现，可在 git 历史中查阅。
@@ -9,7 +9,7 @@
 ## 1. 部署形态
 
 ```
-浏览器 ──► Cloudflare Pages (Workers)
+浏览器 ──► Cloudflare Workers
             ├── Next.js (OpenNext 适配器)
             │     ├── Route Handlers   ← 原 Laravel 路由 (web/api/static)
             │     └── Server Components ← 原 Twig SSR 骨架

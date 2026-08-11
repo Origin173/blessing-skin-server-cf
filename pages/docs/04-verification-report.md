@@ -5,7 +5,7 @@
 
 ## 1. 目标与成功标准
 
-**目标**: 将 Blessing Skin Server (PHP/Laravel) 全量移植到 Cloudflare Pages (Next.js 全栈),
+**目标**: 将 Blessing Skin Server (PHP/Laravel) 全量移植到 Cloudflare Workers (Next.js 全栈),
 UI/功能完全复刻原版, 架构对照原版 PHP, 插件系统格式 + API 语义兼容, 移除 legacy 实现。
 
 **成功标准** (来自迁移路线图 docs/03-migration-roadmap.md 出口标准):
@@ -65,7 +65,7 @@ refresh_token(1) authorize(3: 页面可达/302+code/授权码签发) authorizati
 ### 短期 (建议立即)
 - [ ] **git 提交**: pages/ 当前全部 untracked, 建议提交为独立 commit (或 PR) 固化成果
 - [ ] **CI 实测**: 推送后观察 cf-pages.yml 在 ubuntu runner 上的执行 (本地 Windows 环境不稳, CI 是最终闸门)
-- [ ] **生产部署验证**: `wrangler pages deploy .open-next` 后验证线上 multipart 上传 (本地工具链问题不适用于生产)
+- [ ] **生产部署验证**: `wrangler deploy .open-next/worker.js` 后验证线上 multipart 上传 (本地工具链问题不适用于生产)
 
 ### 中期
 - [ ] 前端语言注入: 服务端 RSC 翻译已就绪, 前端 client 组件文案为硬编码 I18N 常量, 可接入 lang/*.js 注入机制统一

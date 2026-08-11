@@ -1,4 +1,4 @@
-# Next.js (OpenNext) 项目配置 — 绑定名与 pages/ 既有实现保持一致
+# Next.js (OpenNext) 项目配置 — 部署到 Cloudflare Workers (wrangler deploy .open-next/worker.js)
 # 文档: https://opennext.js.org/cloudflare
 name = "blessing-skin-next"
 compatibility_date = "2025-05-01"
