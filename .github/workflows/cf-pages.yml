@@ -38,11 +38,16 @@ jobs:
         run: |
           npx wrangler dev .open-next/worker.js --port 8798 --local --persist-to .wrangler-test > /tmp/wrangler-dev.log 2>&1 &
           for i in $(seq 1 30); do
-            code=$(curl -s -m 4 -o /dev/null -w '%{http_code}' http://127.0.0.1:8798/ 2>/dev/null)
+            code=$(curl -s -m 4 -o /dev/null -w '%{http_code}' http://127.0.0.1:8798/ 2>/dev/null) || code=000
             [ "$code" = "200" ] && break
             sleep 4
           done
-          SMOKE_BASE=http://127.0.0.1:8798 node scripts/smoke-e2e.mjs
+          if [ "$code" != "200" ]; then
+            echo "::error::worker 未就绪 (code=$code), wrangler 日志:"
+            tail -60 /tmp/wrangler-dev.log
+            exit 1
+          fi
+          SMOKE_BASE=http://127.0.0.1:8798 node scripts/smoke-e2e.mjs || { kill %1 || true; exit 1; }
           kill %1 || true
 
   deploy:
