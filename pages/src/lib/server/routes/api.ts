@@ -13,6 +13,7 @@ import { validate } from '@/lib/server/validate';
 import { hashPassword } from '@/lib/server/ciphers';
 import { validatePlayerName } from '@/lib/server/player-name';
 import { readBody } from './helpers';
+import { handleGetSetup } from './setup';
 
 interface ApiContext {
   env: Env;
@@ -41,6 +42,10 @@ function requireScopes(...required: string[]) {
 }
 
 export const apiRoutes = new CompatRouter();
+
+// setup 向导数据端点 (GET /setup 被 RSC page 遮蔽, client 走 /api/setup;
+// 注意: /api/[[...path]] 分发时路径为相对 /api 的 '/setup')
+apiRoutes.get('/setup', async (c) => handleGetSetup(c));
 
 // ---------- API 根 ----------
 

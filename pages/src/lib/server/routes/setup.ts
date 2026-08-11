@@ -193,7 +193,8 @@ setupRoutes.get('/setup/status', async (c) => {
   return jsonData(await collectStatus(c.env));
 });
 
-setupRoutes.get('/setup', async (c) => {
+/** GET /setup 处理器: 状态 + 一次性 token (同时挂 /setup 与 /api/setup) */
+export async function handleGetSetup(c: CompatContext): Promise<Response> {
   const status = await collectStatus(c.env);
   if (!status.available) return unavailable(status);
 
@@ -220,7 +221,9 @@ setupRoutes.get('/setup', async (c) => {
   });
   if (setCookie) res.headers.set('Set-Cookie', setCookie);
   return res;
-});
+}
+
+setupRoutes.get('/setup', handleGetSetup);
 
 setupRoutes.post('/setup/finish', async (c) => {
   const status = await collectStatus(c.env);
